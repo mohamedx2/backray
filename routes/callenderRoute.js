@@ -1,6 +1,6 @@
 const express = require('express');
 const calendarController = require('../controllers/callenderController');
-const authMiddleware = require('../middleware/verifyToken');
+const authMiddleware = require('../middlewares/verifyToken');
 
 const router = express.Router();
 
