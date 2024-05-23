@@ -18,7 +18,7 @@ app.use(cors());
 // Routes
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/users", require("./routes/usersRoute"));
-app.use('/api/calendar', require('./routes/calendarRoutes'));
+app.use('/api/calendar', require('./routes/callendarRoute'));
 
 
 // Generate token route
