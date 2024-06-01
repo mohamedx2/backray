@@ -1,0 +1,5 @@
+# Ignore specific sensitive files
+.env
+
+# Ignore node package dependencies
+node_modules/
