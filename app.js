@@ -18,6 +18,7 @@ app.use(cors());
 // Routes
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/users", require("./routes/usersRoute"));
+app.use("/api/ai", require("./routes/AiRoute"));
 //app.use('/api/calendar', require('./routes/callenderRoute'));
 
 

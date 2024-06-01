@@ -9,6 +9,7 @@
   "author": "wassel essalah",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.12.0",
     "@stream-io/node-sdk": "^0.1.13",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.0.3",
@@ -22,6 +23,7 @@
     "mongoose": "^8.2.2",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.0",
+    "pdfjs-dist": "^4.3.136",
     "react-toastify": "^10.0.5"
   }
 }
