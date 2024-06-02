@@ -1,18 +1,54 @@
-const Calendar = require('../models/Calendar'); // Import the Calendar model
+const Calendar = require('../models/Calendar'); // Adjust this path as necessary
+const User = require('../models/user'); // Adjust this path as necessary
 
+// Get users not working in a specified time range
+module.exports.getUsersNotWorkingInTimeRange = async (req, res) => {
+  const { startDate, endDate } = req.body; // Using req.body to fetch parameters
+  
+  try {
+    // Validate the date inputs
+    if (!startDate || !endDate) {
+      return res.status(400).json({ message: 'Start date and end date are required.' });
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Find all calendar entries within the specified time range
+    const calendarsInTimeRange = await Calendar.find({
+      startDate: { $lte: end },
+      endDate: { $gte: start }
+    });
+
+    // Extract unique worker IDs from the calendar entries
+    const workerIdsInTimeRange = [...new Set(calendarsInTimeRange.flatMap(calendar => calendar.workers))];
+
+    // Find all users who are not assigned to calendars in the time range
+    const usersNotWorking = await User.find({
+      _id: { $nin: workerIdsInTimeRange }
+    });
+
+    res.status(200).json(usersNotWorking);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Create a new calendar entry
 module.exports.createCalendar = async (req, res) => {
-  const { detail, type, date, startTime, endTime } = req.body;
+  const { workers, type, content, startDate, endDate, startTime, endTime } = req.body;
   
   try {
     const newCalendarEntry = new Calendar({
-      owner: req.decodedToken.userId,
-      detail,
+      owner: req.decodedToken.id, // Assuming req.decodedToken contains user information from auth middleware
+      workers,
       type,
-      date,
+      content,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
       startTime,
       endTime
     });
-
     const savedCalendarEntry = await newCalendarEntry.save();
     res.status(201).json(savedCalendarEntry);
   } catch (error) {
@@ -20,27 +56,33 @@ module.exports.createCalendar = async (req, res) => {
   }
 };
 
+// Get all calendar entries for a specific user
 module.exports.getCalendarsByUser = async (req, res) => {
   try {
-    const calendars = await Calendar.find({ owner: req.decodedToken.userId });
+    const calendars = await Calendar.find({
+      workers: req.decodedToken.id
+    }).populate('workers', 'Firstname Lastname email');
+
     res.status(200).json(calendars);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
+// Get all calendar entries
 module.exports.getAllCalendars = async (req, res) => {
   try {
-    const calendars = await Calendar.find();
+    const calendars = await Calendar.find().populate('owner workers', 'Firstname Lastname email');
     res.status(200).json(calendars);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
+// Get a calendar entry by ID
 module.exports.getCalendarById = async (req, res) => {
   try {
-    const calendar = await Calendar.findById(req.params.id).populate('owner', 'username email');
+    const calendar = await Calendar.findById(req.params.id).populate('owner workers', 'username email Firstname Lastname');
     if (!calendar) {
       return res.status(404).json({ message: 'Calendar entry not found' });
     }
@@ -50,9 +92,8 @@ module.exports.getCalendarById = async (req, res) => {
   }
 };
 
+// Update a calendar entry
 module.exports.updateCalendar = async (req, res) => {
-  if (req.body.owner !== req.decodedToken.userId) return req.status(404).json({ message: 'Not the user' });
-
   try {
     const updatedCalendar = await Calendar.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedCalendar) {
@@ -64,6 +105,7 @@ module.exports.updateCalendar = async (req, res) => {
   }
 };
 
+// Delete a calendar entry
 module.exports.deleteCalendar = async (req, res) => {
   try {
     const deletedCalendar = await Calendar.findByIdAndDelete(req.params.id);
