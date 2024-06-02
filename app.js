@@ -4,6 +4,9 @@ const tokenProvider = require("./config/tokenprovider");
 const cors = require('cors');
 const { User } = require("./models/user");
 require("dotenv").config();
+const locationsRouter = require('./routes/loucationsRoute');
+const workplacesRouter = require('./routes/workPlaceRoute');
+const shiftsRouter = require('./routes/shiftsRoute');
 
 const {FileEmbedding, embedText, mergeAndRemoveSimilar} = require('./utils/embeddings')
 
@@ -21,6 +24,12 @@ app.use(cors());
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/users", require("./routes/usersRoute"));
 app.use("/api/ai", require("./routes/AiRoute"));
+app.use('/api/calendar', require('./routes/callenderRoute'));
+app.use('/api/mail', require('./routes/mailRoute'));
+app.use('/api/chat', require('./routes/chatRoute'));
+app.use('/api/locations', locationsRouter);
+app.use('/api/workplaces', workplacesRouter);
+app.use('/api/shifts', shiftsRouter);
 //app.use('/api/calendar', require('./routes/callenderRoute'));
 
 
