@@ -1,27 +1,28 @@
 const {GoogleGenerativeAI} =  require("@google/generative-ai");
-const {extractTextFromPdf} = require('../utils/PdfTextExtractor');
-const path = require('path');
+
+const supabase = require("../utils/supabase");
+const {embedText} = require("../utils/embeddings");
 
 const router = require("express").Router();
 
-require('dotenv').config()
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "models/gemini-pro"});
-
-let context = ''
-
-extractTextFromPdf(path.join(__dirname + "/../files/AIDA.pdf"))
-  .then((text) => context += "\n" + "source: AIDA.pdf" + "\n" + text)
-  .catch((error) => console.error(error));
-
-extractTextFromPdf(path.join(__dirname + "/../files/Nhi2 Mappe (2024)-1.pdf"))
-  .then((text) => context += "\n" + "source: Nhi2 Mappe (2024)-1.pdf" + "\n" + text)
-  .catch((error) => console.error(error));
 
 router.post('/', async (req, res) => {
     try{
         const { content } = req.body
+
+        const emb = await embedText(content)
+        const retrivels = await supabase.rpc("match_documents",{
+          query_embedding:emb,
+          match_threshold:0.5,
+          match_count:1
+        })
+      
+        const context = retrivels.data[0].text
+        
         console.log(context)
+
         const prompt = `${context !== ''? "\nanswer the question only based on the text: " + context + "\n":""}${context !== ''? "question: " + content:content}`
     
         const result = await model.generateContentStream(prompt);

@@ -5,6 +5,8 @@ const cors = require('cors');
 const { User } = require("./models/user");
 require("dotenv").config();
 
+const {FileEmbedding, embedText, mergeAndRemoveSimilar} = require('./utils/embeddings')
+
 // Connect to database
 connectToDb();
 
@@ -45,6 +47,36 @@ app.post('/stream-token', async (req, res) => {
     res.status(500).send('Error generating token');
   }
 });
+
+// el code hadha just 3maltou bech n7ot el pdf fel data base bark mosta9balan nwali nrak7ou bech kan el admin zad pdf yet7at fel database
+
+// const {PDFLoader} = require("@langchain/community/document_loaders/fs/pdf");
+// const {RecursiveCharacterTextSplitter} = require("langchain/text_splitter");
+// const supabase = require("./utils/supabase");
+
+// const fs = require('fs');
+
+// app.get('/vectorize', async (req, res) => {
+//   const splitter = new RecursiveCharacterTextSplitter({
+//     chunkSize: 2000,
+//     chunkOverlap: 350,
+//   });
+  
+//   const folder = "./files"
+//   const dirContents = fs.readdirSync(folder);
+
+//   for (const file of dirContents) {
+//     const loader = new PDFLoader(folder+"/"+file);
+
+//     const docs = await loader.load();
+
+//     const chunks = await splitter.splitDocuments(docs);
+
+//     await FileEmbedding(chunks)
+//   }
+
+//   res.send("ok")
+// })
 
 
 // Running the server
