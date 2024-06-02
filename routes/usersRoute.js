@@ -14,7 +14,7 @@ router.route("/profile").get( verifyToken,getAllUserCtrl);
 router.route("/profile/:id")
     .get(validateObjectId, getUserProfileCtrl)
 //    .put(validateObjectId,verifyTokenAndOnlyUser,,updateUserProfileCtrl)
-    .put(validateObjectId,verifyTokenAdminUser,updateUserProfileCtrl)
+
     .delete(validateObjectId,verifyTokenAndAuthorization,deleteUserProfileCtrl);
 
 
