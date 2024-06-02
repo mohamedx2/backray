@@ -4,9 +4,9 @@ const nodemailer = require('nodemailer');
 const Join = require('../models/join');
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.office365.com',
-  port: 587,
-  secure: false,
+  host: 'mail.mega-tel.de', // SMTP server hostname
+  port: 465, // SMTP port
+  secure: true,
   auth: {
     user: process.env.EMAIL_USERNAME,
     pass: process.env.EMAIL_PASSWORD
