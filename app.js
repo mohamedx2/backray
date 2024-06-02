@@ -26,7 +26,6 @@ app.use("/api/users", require("./routes/usersRoute"));
 app.use("/api/ai", require("./routes/AiRoute"));
 app.use('/api/calendar', require('./routes/callenderRoute'));
 app.use('/api/mail', require('./routes/mailRoute'));
-app.use('/api/chat', require('./routes/chatRoute'));
 app.use('/api/locations', locationsRouter);
 app.use('/api/workplaces', workplacesRouter);
 app.use('/api/shifts', shiftsRouter);
