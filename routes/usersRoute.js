@@ -6,7 +6,7 @@ const photoUpload = require("../middlewares/photoUpload");
 
 
 // /api/users/profile
-router.route("/profile").get( verifyTokenAndAdmin,getAllUserCtrl);
+router.route("/profile").get( verifyToken,getAllUserCtrl);
 
 
 

@@ -1,16 +1,14 @@
 const express = require('express');
-const calendarController = require('../controllers/callenderController');
-const authMiddleware = require('../middlewares/verifyToken');
-
 const router = express.Router();
+const calendarController = require('../controllers/callenderController'); // Adjust this path as necessary
+const {verifyAdminToken} = require('../middlewares/verifyToken'); // Adjust this path as necessary
 
-// Routes
-router.post('/', authMiddleware, calendarController.createCalendar);
-router.get('/user', authMiddleware, calendarController.getCalendarsByUser);
-router.get('/', authMiddleware, calendarController.getAllCalendars);
-router.get('/:id', authMiddleware, calendarController.getCalendarById);
-router.put('/:id', authMiddleware, calendarController.updateCalendar);
-router.delete('/:id', authMiddleware, calendarController.deleteCalendar);
+router.post('/not-working',verifyAdminToken, calendarController.getUsersNotWorkingInTimeRange);
+router.post('/',verifyAdminToken, calendarController.createCalendar);
+router.get('/user', calendarController.getCalendarsByUser);
+router.get('/',verifyAdminToken, calendarController.getAllCalendars);
+router.get('/:id',verifyAdminToken, calendarController.getCalendarById);
+router.patch('/:id',verifyAdminToken,  calendarController.updateCalendar); // Protect this route with verifyAdmin
+router.delete('/:id',verifyAdminToken,  calendarController.deleteCalendar); // Protect this route with verifyAdmin
 
 module.exports = router;
-s
