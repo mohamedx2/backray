@@ -36,27 +36,14 @@ router.post('/', async (req, res) => {
 });
 
 // Update a workplace by ID
-router.patch('/:id', getWorkplace, async (req, res) => {
-  if (req.body.location_name != null) {
-    res.workplace.location_name = req.body.location_name;
-  }
-  if (req.body.map_link != null) {
-    res.workplace.map_link = req.body.map_link;
-  }
-  if (req.body.color != null) {
-    res.workplace.color = req.body.color;
-  }
-  if (req.body.shifts != null) {
-    res.workplace.shifts = req.body.shifts;
-  }
+router.put('/:id', getWorkplace, async (req, res) => {
   try {
-    const updatedWorkplace = await res.workplace.save();
+    const updatedWorkplace = await Workplace.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updatedWorkplace);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
-
 // Delete a workplace by ID
 router.delete('/:id', getWorkplace, async (req, res) => {
   try {
