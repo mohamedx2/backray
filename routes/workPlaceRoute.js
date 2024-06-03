@@ -36,32 +36,22 @@ router.post('/', async (req, res) => {
 });
 
 // Update a workplace by ID
-router.patch('/:id', getWorkplace, async (req, res) => {
-  if (req.body.location_name != null) {
-    res.workplace.location_name = req.body.location_name;
-  }
-  if (req.body.map_link != null) {
-    res.workplace.map_link = req.body.map_link;
-  }
-  if (req.body.color != null) {
-    res.workplace.color = req.body.color;
-  }
-  if (req.body.shifts != null) {
-    res.workplace.shifts = req.body.shifts;
-  }
+router.put('/:id', getWorkplace, async (req, res) => {
   try {
-    const updatedWorkplace = await res.workplace.save();
+    const updatedWorkplace = await Workplace.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updatedWorkplace);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
-
 // Delete a workplace by ID
 router.delete('/:id', getWorkplace, async (req, res) => {
   try {
-    await res.workplace.remove();
-    res.json({ message: 'Deleted Workplace' });
+    const deletedWorkplace = await Workplace.findByIdAndDelete(req.params.id);
+    if (!deletedWorkplace) {
+      return res.status(404).json({ message: 'Workplace not found' });
+    }
+    res.json({ message: 'Deleted Workplace', deletedWorkplace });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -75,6 +65,7 @@ async function getWorkplace(req, res, next) {
     if (workplace == null) {
       return res.status(404).json({ message: 'Cannot find workplace' });
     }
+    next()
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
