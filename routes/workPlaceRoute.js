@@ -45,7 +45,7 @@ router.put('/:id', getWorkplace, async (req, res) => {
   }
 });
 // Delete a workplace by ID
-router.delete('/:id', getWorkplace, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const deletedWorkplace = await Workplace.findByIdAndDelete(req.params.id);
   
