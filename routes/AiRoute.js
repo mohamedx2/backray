@@ -19,22 +19,34 @@ router.post('/', async (req, res) => {
           match_count:1
         })
       
-        const context = retrivels.data[0].text
-        
-        console.log(context)
+        const context = retrivels?.data.length > 0 ? retrivels.data[0].text : null
 
-        const prompt = `${context !== ''? "\nanswer the question only based on the text: " + context + "\n":""}${context !== ''? "question: " + content:content}`
+        if(context !== null && content !== ''){
+          const prompt = `${context !== ''? "\nanswer the question only based on the text: " + context + "\n":""}${context !== ''? "question: " + content:content}`
     
-        const result = await model.generateContentStream(prompt);
-    
-        let text = '';
-        for await (const chunk of result.stream) {
-          const chunkText = chunk.text();
-          text += chunkText;
-          res.write(chunkText)
+          const result = await model.generateContentStream(prompt);
+      
+          let text = '';
+          for await (const chunk of result.stream) {
+            const chunkText = chunk.text();
+            text += chunkText;
+            res.write(chunkText)
+          }
+      
+          res.end()
         }
-    
-        res.end()
+        else{
+          const result = await model.generateContentStream(content);
+      
+          let text = '';
+          for await (const chunk of result.stream) {
+            const chunkText = chunk.text();
+            text += chunkText;
+            res.write(chunkText)
+          }
+
+          res.end()
+        }
       }
       catch(err) {
         console.error(err)
