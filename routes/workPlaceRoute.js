@@ -60,8 +60,11 @@ router.patch('/:id', getWorkplace, async (req, res) => {
 // Delete a workplace by ID
 router.delete('/:id', getWorkplace, async (req, res) => {
   try {
-    await res.workplace.remove();
-    res.json({ message: 'Deleted Workplace' });
+    const deletedWorkplace = await Workplace.findByIdAndDelete(req.params.id);
+    if (!deletedWorkplace) {
+      return res.status(404).json({ message: 'Workplace not found' });
+    }
+    res.json({ message: 'Deleted Workplace', deletedWorkplace });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -75,6 +78,7 @@ async function getWorkplace(req, res, next) {
     if (workplace == null) {
       return res.status(404).json({ message: 'Cannot find workplace' });
     }
+    next()
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
