@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update a workplace by ID
-router.put('/:id', getWorkplace, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const updatedWorkplace = await Workplace.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updatedWorkplace);
